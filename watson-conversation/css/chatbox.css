@@ -121,6 +121,7 @@
   color: white;
   background-color: rgb(35, 40, 45);
   cursor: default;
+  position: relative;
 
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -193,7 +194,7 @@
 #watson-box #chatbox-body
 {
   position: relative;
-  height: 100%;
+  height: calc(100% - 2.15em);
 }
 
 #call-interface
@@ -500,4 +501,14 @@
     -webkit-transform: translateY(0);
     transform: translateY(0);
   }
+}
+
+.watson-message a {
+    color: #269EE2;
+    text-decoration: none;
+}
+
+.watson-message a:hover {
+    color: #269EE2;
+    text-decoration: underline;
 }

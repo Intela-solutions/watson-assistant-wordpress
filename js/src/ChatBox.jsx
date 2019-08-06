@@ -243,6 +243,7 @@ export default class ChatBox extends Component {
                     }
                     <ReactTooltip/>
                     <div className='overflow-hidden watson-font'>{watsonconvSettings.title}</div>
+                    <div className='chatbox-logo'></div>
                 </div>
                 <div id="chatbox-body">
                     {hasNumber && showCallInterface &&

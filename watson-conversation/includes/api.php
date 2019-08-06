@@ -74,6 +74,13 @@ class API {
             )
         );
 
+        register_rest_route('watsonconv/v1', '/get-logo',
+            array(
+                'methods' => 'post',
+                'callback' => array('\WatsonConv\Settings\Customize', 'get_watson_logo')
+            )
+        );
+
     }
 
     public static function twilio_get_token(\WP_REST_Request $request) {

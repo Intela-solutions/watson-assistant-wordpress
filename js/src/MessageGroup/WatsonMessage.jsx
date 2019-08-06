@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Autolinker from 'autolinker';
 
 export default class WatsonMessage extends Component {
   constructor(props) {
@@ -93,7 +94,7 @@ export default class WatsonMessage extends Component {
             <div
               key={response.length}
               className={`message ${from}-message watson-font`}
-              dangerouslySetInnerHTML={{__html: content[i].text}}
+              dangerouslySetInnerHTML={{__html: Autolinker.link(content[i].text)}}
             ></div>
           );
           break;
