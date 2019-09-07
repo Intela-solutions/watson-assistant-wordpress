@@ -1,3 +1,4 @@
+/* global jQuery */
 import React, { Component } from 'react';
 
 export default class InputBox extends Component {
@@ -27,6 +28,24 @@ export default class InputBox extends Component {
     });
   }
 
+  onFocus(e) {
+    if (jQuery.browser.safari) {
+      setTimeout(() => {
+        let currentscroll = jQuery(window).scrollTop();
+        let widgetHeight = (window.innerHeight - currentscroll) * 2;
+        jQuery('#watson-box').css({'height': 'calc(' + widgetHeight + 'px - 50px)'});
+        window.scrollTo(0, 0);
+        }, 500);
+    }
+      setTimeout(() => {
+          jQuery('#messages').stop().animate({scrollTop:jQuery('#messages').prop("scrollHeight")}, 1000);
+      }, 1000);
+  }
+
+  onBlur(e) {
+    jQuery('#watson-box').css({'height': '100%'});
+  }
+
   render() {
     let showSendBtn = (watsonconvSettings.showSendBtn === 'yes');
     let { messagePrompt } = watsonconvSettings;
@@ -39,6 +58,8 @@ export default class InputBox extends Component {
           placeholder={messagePrompt}
           value={this.state.message}
           onChange={this.setMessage.bind(this)}
+          onFocus={this.onFocus.bind(this)}
+          onBlur={this.onBlur.bind(this)}
         />
         {showSendBtn && 
           <button type='submit' id='message-send'>
