@@ -29,7 +29,7 @@ export default class InputBox extends Component {
   }
 
   onFocus(e) {
-    if (jQuery.browser.safari) {
+    if (jQuery.browser.safari && navigator.userAgent.match(/(iPod|iPhone)/)) {
       setTimeout(() => {
         let currentscroll = jQuery(window).scrollTop();
         let widgetHeight = (window.innerHeight - currentscroll) * 2;

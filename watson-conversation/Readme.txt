@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 5.2.2
-Stable tag: 0.8.14
+Stable tag: 0.8.15
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,6 +87,9 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog ==
+
+= 0.8.15 =
+* Fixed bug with layout in Safari desktop
 
 = 0.8.14 =
 * Fixed out of screen input field on mobile
