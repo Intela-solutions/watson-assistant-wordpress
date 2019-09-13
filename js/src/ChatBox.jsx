@@ -204,6 +204,11 @@ export default class ChatBox extends Component {
         }
     }
 
+    componentDidMount() {
+        const headerHeight = jQuery('#watson-header').outerHeight();
+        jQuery('#chatbox-body').css({'height': 'calc(100% - ' + headerHeight + 'px)'});
+    }
+
     render() {
         let {callConfig, clearText} = watsonconvSettings;
 

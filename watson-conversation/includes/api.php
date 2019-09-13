@@ -397,7 +397,7 @@ class API {
                     'Authorization' => $credentials['auth_header'],
                     'Content-Type' => 'application/json'
                 ),
-                'body' => new \stdClass()
+                'body' => '{}'
             )
         );
         $response_code = wp_remote_retrieve_response_code($response);
