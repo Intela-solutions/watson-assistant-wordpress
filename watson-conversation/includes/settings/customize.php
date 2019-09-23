@@ -264,7 +264,8 @@ class Customize {
             <?php
                 $pages = get_pages(array(
                     'sort_column' => 'post_date',
-                    'sort_order' => 'desc'
+                    'sort_order' => 'desc',
+                    'post_status' => 'publish,private'
                 ));
                 $checked_pages = get_option('watsonconv_pages');
 
@@ -299,7 +300,10 @@ class Customize {
                 <label for="select_all_posts">Select All Posts</label>
             </legend>
             <?php
-                $posts = get_posts(array('order_by' => 'date'));
+                $posts = get_posts(array(
+                    'order_by' => 'date',
+                    'post_status' => 'publish,private'
+                ));
                 $checked_posts = get_option('watsonconv_posts');
 
                 foreach ($posts as $post) {
