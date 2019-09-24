@@ -94,6 +94,10 @@ export default class ChatBox extends Component {
                 this.scrollToBottom();
             };
         }.bind(this));
+
+        // Fixed out of screen input field on mobile Chrome
+        const headerHeight = jQuery('#watson-header').outerHeight();
+        jQuery('#chatbox-body').css({'height': 'calc(100% - ' + headerHeight + 'px)'});
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -202,11 +206,6 @@ export default class ChatBox extends Component {
         if (typeof(localStorage) !== 'undefined') {
             localStorage.setItem('watson_bot_state', JSON.stringify(this.state))
         }
-    }
-
-    componentDidMount() {
-        const headerHeight = jQuery('#watson-header').outerHeight();
-        jQuery('#chatbox-body').css({'height': 'calc(100% - ' + headerHeight + 'px)'});
     }
 
     render() {
