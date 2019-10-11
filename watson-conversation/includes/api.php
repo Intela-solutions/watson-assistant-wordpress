@@ -17,7 +17,7 @@ add_action( 'wp_mail_failed', array('WatsonConv\API', 'on_mail_error'));
 
 class API {
     const API_VERSION = '2018-07-10';  // Workspace/Skill API (version 1)
-    const API_VERSION_2 = '2018-11-08';  // Assistant API (version 2)
+    const API_VERSION_2 = '2019-02-28';  // Assistant API (version 2)
 
     const API_V1_URL_RE = '/\/api\/v1\/workspaces\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/message/';
     const API_V2_URL_RE = '/\/api\/v2\/assistants\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}\/sessions/';
@@ -330,7 +330,7 @@ class API {
                 'Authorization' => $credentials['auth_header'],
                 'Content-Type' => 'application/json'
             ),
-            'body' => json_encode($send_body)
+            'body' => json_encode($send_body,  JSON_FORCE_OBJECT)
         );
 
         $response = wp_remote_post(sprintf($url_tpl, $session_id), $post_args);
