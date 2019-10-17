@@ -517,3 +517,7 @@
     color: #269EE2;
     text-decoration: underline;
 }
+
+.show-chatbox {
+  position: fixed;
+}

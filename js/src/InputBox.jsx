@@ -6,7 +6,9 @@ export default class InputBox extends Component {
     super(props);
 
     this.state = {
-      message: ''
+      message: '',
+      pageScrolling: true,
+      scrollPosition: 0
     };
   }
 
@@ -29,21 +31,54 @@ export default class InputBox extends Component {
   }
 
   onFocus(e) {
-    if (jQuery.browser.safari && navigator.userAgent.match(/(iPod|iPhone)/)) {
-      setTimeout(() => {
-        let currentscroll = jQuery(window).scrollTop();
-        let widgetHeight = (window.innerHeight - currentscroll) * 2;
-        jQuery('#watson-box').css({'height': 'calc(' + widgetHeight + 'px - 50px)'});
-        window.scrollTo(0, 0);
-        }, 500);
-    }
+      if (jQuery.browser.safari && navigator.userAgent.match(/(iPod|iPhone)/) && jQuery(window).innerWidth() < 640) {
+          const innerHeight = window.innerHeight;
+
+          this.setState({
+              pageScrolling: false,
+              scrollPosition: jQuery(window).scrollTop()
+          });
+
+          setTimeout(() => {
+              const distanceHeaderToTop = Math.abs(jQuery('#watson-header').offset().top - jQuery(window).scrollTop());
+              const windowInnerHeight = innerHeight - distanceHeaderToTop;
+              const newChatBoxHeight = windowInnerHeight * 100 / innerHeight;
+
+              jQuery('#watson-box').css({'height': newChatBoxHeight + '%'});
+              jQuery('body').addClass('show-chatbox');
+              jQuery(window).scrollTop(0);
+          }, 500);
+      }
       setTimeout(() => {
           jQuery('#messages').stop().animate({scrollTop:jQuery('#messages').prop("scrollHeight")}, 1000);
       }, 1000);
   }
 
   onBlur(e) {
-    jQuery('#watson-box').css({'height': '100%'});
+       jQuery('#watson-box').css({'height': '100%'});
+
+       this.setState({
+           pageScrolling: true
+       });
+
+       jQuery('body').removeClass('show-chatbox');
+
+       if (this.state.scrollPosition > 0) {
+           jQuery(window).scrollTop(this.state.scrollPosition);
+       }
+  }
+
+  touchendChatBox() {
+      if (!this.state.pageScrolling) {
+          let distanceHeaderToTop = jQuery('#watson-header').offset().top - jQuery(window).scrollTop();
+          if (distanceHeaderToTop < 0) {
+              jQuery(window).scrollTop(0);
+          }
+      }
+  }
+
+  componentDidMount() {
+      jQuery('#watson-box').on('touchend', this.touchendChatBox.bind(this));
   }
 
   render() {
