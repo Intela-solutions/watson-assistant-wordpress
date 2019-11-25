@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Autolinker from 'autolinker';
+import DOMPurify from 'dompurify';
 
 export default class WatsonMessage extends Component {
   constructor(props) {
@@ -94,7 +95,7 @@ export default class WatsonMessage extends Component {
             <div
               key={response.length}
               className={`message ${from}-message watson-font`}
-              dangerouslySetInnerHTML={{__html: Autolinker.link(content[i].text)}}
+              dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(content[i].text))}}
             ></div>
           );
           break;
@@ -105,7 +106,7 @@ export default class WatsonMessage extends Component {
               key={response.length}
               className={`message ${from}-message watson-font`}
             >
-              <span dangerouslySetInnerHTML={{__html: content[i].title}}></span>
+              <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(content[i].title)}}></span>
               <img src={content[i].source} title={content[i].description}></img>
             </div>
           );

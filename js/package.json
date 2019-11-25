@@ -2,16 +2,17 @@
   "name": "watson-conversation",
   "private": true,
   "dependencies": {
-    "autolinker": "^3.1.0",
-    "core-js": "^2.5.3",
+    "autolinker": "^3.11.1",
+    "core-js": "^2.6.10",
     "deepmerge": "^2.2.1",
+    "dompurify": "^2.0.7",
     "jstz": "^2.0.0",
-    "preact": "^8.1.0",
-    "preact-compat": "^3.17.0",
+    "preact": "^8.5.3",
+    "preact-compat": "^3.19.0",
     "querystringify": "^1.0.0",
-    "react-draggable": "^3.0.4",
+    "react-draggable": "^3.3.2",
     "react-tooltip-currenttarget": "^3.3.5",
-    "react-transition-group": "^2.2.1",
+    "react-transition-group": "^2.9.0",
     "webrtcsupport": "^2.2.0",
     "whatwg-fetch": "^2.0.3"
   },
@@ -22,7 +23,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "webpack": "^2.5.1",
-    "webpack-dashboard": "^3.0.7"
+    "webpack-dashboard": "^3.2.0"
   },
   "scripts": {
     "watch": "webpack-dashboard -- node ./node_modules/webpack/bin/webpack.js --watch",

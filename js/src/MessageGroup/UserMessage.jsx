@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import DOMPurify from 'dompurify';
 
 export default class UserMessage extends Component {
   shouldComponentUpdate() {
@@ -9,7 +10,7 @@ export default class UserMessage extends Component {
     return <div>
       <div
         className={`message ${from}-message watson-font`}
-        dangerouslySetInnerHTML={{__html: text}}
+        dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(text)}}
       ></div>
     </div>;
   }
