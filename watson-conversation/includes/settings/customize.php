@@ -306,6 +306,21 @@ class Customize {
                 ));
                 $checked_posts = get_option('watsonconv_posts');
 
+                // Get all custom post types
+                $custom_post_types = get_post_types(array('_builtin' => false));
+
+                foreach ($custom_post_types as $custom_post_type) {
+                    $custom_posts = get_posts(array(
+                        'order_by' => 'date',
+                        'post_type'   => $custom_post_type,
+                        'post_status' => 'publish,private'
+                    ));
+
+                    foreach ($custom_posts as $custom_post) {
+                        array_push($posts, $custom_post);
+                    }
+                }
+
                 foreach ($posts as $post) {
                 ?>
                     <input

@@ -90,6 +90,31 @@ export default class WatsonMessage extends Component {
 
           break;
 
+          case 'suggestion':
+
+              if (content[i].title) {
+                  response.push(
+                      <div
+                          key={response.length}
+                          className={`message ${from}-message watson-font`}
+                      >
+                          <strong>{content[i].title}</strong>
+                      </div>
+                  );
+              }
+
+              response.push(...content[i].suggestions.map(
+                  (suggestion, index) => (
+                      <div
+                          key={response.length + index} className={`message message-option watson-font`}
+                          onClick={() => { sendMessage(suggestion.value, true); }}
+                      >
+                          {suggestion.label}
+                      </div>
+                  )
+              ));
+              break;
+
         case 'text':
           response.push(
             <div
@@ -110,6 +135,30 @@ export default class WatsonMessage extends Component {
               <img src={content[i].source} title={content[i].description}></img>
             </div>
           );
+          break;
+
+
+        case 'search':
+           response.push(
+             <div
+               key={response.length}
+               className={`message ${from}-message watson-font`}
+             >
+                 <strong>{content[i].header}</strong>
+             </div>
+           );
+
+           response.push(...content[i].results.map(
+               (result, index) => (
+                   <div key={response.length + index} className={`message ${from}-message-search watson-font`}>
+                       <strong dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(result.title))}}></strong>
+                       <p dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(result.highlight.text[0]))}}></p>
+                       {
+                           result.url ? <a href={result.url} target={`_blank`} className={`watson-search-link`}></a> : null
+                       }
+                   </div>
+               )
+          ));
           break;
 
       }
