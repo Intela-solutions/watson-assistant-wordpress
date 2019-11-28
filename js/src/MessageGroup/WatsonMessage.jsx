@@ -56,6 +56,34 @@ export default class WatsonMessage extends Component {
     }
   }
 
+  escapeAnchorTag(text) {
+    let clearText = DOMPurify.sanitize(text);
+    let textParse = Autolinker.parse( clearText, {
+      urls: true,
+        email: true
+    } );
+
+    textParse.map((link) => {
+      if(link.getType() === 'url') {
+        let url = link.getUrl();
+        let urlObj = new URL(url);
+        let urlHash = urlObj.hash;
+        let codedHash = '&amp;__hash__;';
+
+        if(urlHash) {
+          clearText = clearText.replace(decodeURIComponent(urlHash), 'false');
+        }
+
+        if(url.indexOf(codedHash) !== -1) {
+          clearText = clearText.replace(codedHash, '#');
+        }
+      }
+    });
+
+    let linkedText = Autolinker.link(clearText);
+    return linkedText;
+  }
+
   render({sendMessage, from, content, options}, { typing, currentIndex }) {
     let response = [], legacyOptions = true;
 
@@ -79,8 +107,8 @@ export default class WatsonMessage extends Component {
 
           response.push(...content[i].options.map(
             (option, index) => (
-              <div 
-                key={response.length + index} className={`message message-option watson-font`} 
+              <div
+                key={response.length + index} className={`message message-option watson-font`}
                 onClick={() => { sendMessage(option.value, true); }}
               >
                 {option.label}
@@ -120,7 +148,7 @@ export default class WatsonMessage extends Component {
             <div
               key={response.length}
               className={`message ${from}-message watson-font`}
-              dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(content[i].text))}}
+              dangerouslySetInnerHTML={{__html: this.escapeAnchorTag(content[i].text)}}
             ></div>
           );
           break;
@@ -131,7 +159,7 @@ export default class WatsonMessage extends Component {
               key={response.length}
               className={`message ${from}-message watson-font`}
             >
-              <span dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(content[i].title)}}></span>
+              <span dangerouslySetInnerHTML={{__html: this.escapeAnchorTag(content[i].title)}}></span>
               <img src={content[i].source} title={content[i].description}></img>
             </div>
           );
