@@ -57,7 +57,7 @@ export default class WatsonMessage extends Component {
   }
 
   escapeAnchorTag(text) {
-    let clearText = DOMPurify.sanitize(text);
+    let clearText = DOMPurify.sanitize(text, {ADD_ATTR: ['target']});
     let textParse = Autolinker.parse( clearText, {
       urls: true,
         email: true
