@@ -552,3 +552,16 @@
 #message-container #messages .watson-message-search .watson-search-link:hover {
   border: 2px solid #0062ff;
 }
+
+#call-interface #controls .call-interface-button {
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+  margin: 0 15px 0 15px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+#call-interface #controls .call-interface-button:hover {
+  opacity: 0.9;
+}

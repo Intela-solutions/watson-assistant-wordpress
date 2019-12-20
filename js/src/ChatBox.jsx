@@ -236,22 +236,26 @@ export default class ChatBox extends Component {
                     <span
                         onClick={this.reset.bind(this)}
                         className={`dashicons dashicons-trash header-button`}
-                        data-tip={clearText || 'Clear Messages'}>
+                        data-tip={clearText || 'Clear Messages'}
+                        data-for='header-button-tooltip'>
           </span>
                     {hasNumber &&
                     <span
                         onClick={this.toggleCallInterface.bind(this)}
                         className={`dashicons dashicons-phone header-button`}
-                        data-tip={callConfig.callTooltip || 'Talk to a Live Agent'}>
+                        data-tip={callConfig.callTooltip || 'Talk to a Live Agent'}
+                        data-for='header-button-tooltip'>
             </span>
                     }
-                    <ReactTooltip/>
+                    <ReactTooltip id='header-button-tooltip'/>
                     <div className='overflow-hidden watson-font'>{watsonconvSettings.title}</div>
                     <div className='chatbox-logo'></div>
                 </div>
                 <div id="chatbox-body">
                     {hasNumber && showCallInterface &&
-                    <CallInterface allowTwilio={allowTwilio}/>}
+                    <CallInterface allowTwilio={allowTwilio}
+                                   toggleCallInterface={this.toggleCallInterface.bind(this)}
+                    />}
                     <div id='message-container'>
                         <div id='messages' ref={div => {
                             this.messageList = div

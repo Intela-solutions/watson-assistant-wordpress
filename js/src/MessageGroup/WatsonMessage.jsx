@@ -180,7 +180,7 @@ export default class WatsonMessage extends Component {
                (result, index) => (
                    <div key={response.length + index} className={`message ${from}-message-search watson-font`}>
                        <strong dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(result.title))}}></strong>
-                       <p dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(result.highlight.text[0]))}}></p>
+                       <p dangerouslySetInnerHTML={{__html: Autolinker.link(DOMPurify.sanitize(result.highlight.body ? result.highlight.body[0] : result.body))}}></p>
                        {
                            result.url ? <a href={result.url} target={`_blank`} className={`watson-search-link`}></a> : null
                        }
