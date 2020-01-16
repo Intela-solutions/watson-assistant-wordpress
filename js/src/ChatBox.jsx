@@ -26,6 +26,9 @@ export default class ChatBox extends Component {
                 mediaSecure: true,
                 convStarted: false
             };
+            if(watsonconvSettings.typingDelayFromPlugin !== 'no') {
+                this.state.indexTypingMessage = [];
+            }
         }
         this.state.context = merge(
             this.state.context,
@@ -111,6 +114,9 @@ export default class ChatBox extends Component {
                 this.scrollToBottom()
             }
         }
+        if (watsonconvSettings.typingDelayFromPlugin !== 'no' && this.state.messages.length === 0 && this.state.convStarted && !this.props.isMinimized) {
+            this.watsonTyping(watsonconvSettings.typingDelayFromPlugin);
+        }
     }
 
     toggleCallInterface() {
@@ -150,6 +156,8 @@ export default class ChatBox extends Component {
             });
         }
         sendBody.session_id = this.state.session_id;
+        let waitingIBMResponse = watsonconvSettings.typingDelayFromPlugin === 'waiting_ibm_response';
+        let typingDelayFromPlugin = watsonconvSettings.typingDelayFromPlugin === 'yes';
 
         fetch(watsonconvSettings.apiUrl, {
             headers: {
@@ -166,18 +174,63 @@ export default class ChatBox extends Component {
             return response.json();
         }).then(body => {
             let {generic} = body.output;
-
-            this.setState({
+            let pauseIndex = generic.findIndex(
+                item => item.response_type === 'pause'
+            );
+            let state = {
                 context: body.context,
-                messages: this.state.messages.concat({
-                    from: 'watson',
-                    content: generic,
-                    options: body.output.options
-                }),
                 session_id: body.session_id
-            }, this.saveState.bind(this));
+            };
+
+            if (waitingIBMResponse) {
+                this.stopWatsonTyping();
+                if (pauseIndex !== -1) {
+                    generic.splice(pauseIndex, 1);
+                }
+            }
+
+            if (typingDelayFromPlugin) {
+                if (pauseIndex !== -1) {
+                    generic.splice(pauseIndex, 1);
+                }
+                let { messages, indexTypingMessage } = this.state;
+
+                messages[indexTypingMessage[0]].content = messages[indexTypingMessage[0]].content.concat(generic);
+                messages[indexTypingMessage[0]].options = body.output.options;
+                indexTypingMessage.shift();
+                state.messages = messages;
+                state.indexTypingMessage = indexTypingMessage;
+            } else {
+                state.messages = this.state.messages.concat({
+                        from: 'watson',
+                        content: generic,
+                        options: body.output.options
+                    });
+                state.session_id = body.session_id;
+            }
+
+            this.setState(state, this.saveState.bind(this));
+
         }).catch(error => {
             console.log(error);
+
+            if (watsonconvSettings.messageAfterError.length > 0) {
+                this.setState({
+                    messages: this.state.messages.concat({
+                        from: 'watson',
+                        content: [
+                            {
+                                response_type: 'text',
+                                text: watsonconvSettings.messageAfterError
+                            }
+                        ]
+                    })
+                });
+            }
+
+            if (waitingIBMResponse) {
+                this.stopWatsonTyping();
+            }
         });
 
         if (message) {
@@ -188,14 +241,24 @@ export default class ChatBox extends Component {
                 })
             });
         }
+
+        if ((waitingIBMResponse || typingDelayFromPlugin) && this.state.messages.length > 0) {
+            this.watsonTyping(watsonconvSettings.typingDelayFromPlugin);
+        }
     }
 
     reset() {
-        this.setState({
+        let resetState = {
             messages: [],
             context: this.getInitialContext(),
             session_id: null
-        });
+        };
+
+        if(watsonconvSettings.typingDelayFromPlugin !== 'no') {
+            resetState.indexTypingMessage = [];
+        }
+
+        this.setState(resetState);
 
         this.sendMessage();
 
@@ -206,6 +269,42 @@ export default class ChatBox extends Component {
         if (typeof(localStorage) !== 'undefined') {
             localStorage.setItem('watson_bot_state', JSON.stringify(this.state))
         }
+    }
+
+    watsonTyping(typingType) {
+        let typing = {
+            from: 'watson',
+            content: [
+                {
+                    typing: true,
+                    response_type: 'pause'
+                }
+            ],
+        };
+        let indexTypingMessage = this.state.messages.length;
+
+        if (typingType === 'yes') {
+            typing.content[0].time = watsonconvSettings.typingDelayTime;
+        } else {
+            typing.content[0].time = watsonconvSettings.typingMaxWaitingtime;
+            typing.waitingIBMResponse = false;
+        }
+
+
+        this.setState({
+            messages: this.state.messages.concat(typing),
+            indexTypingMessage: [...this.state.indexTypingMessage, indexTypingMessage]
+        });
+    }
+
+    stopWatsonTyping() {
+        let { messages, indexTypingMessage } = this.state;
+        messages[indexTypingMessage[0]].waitingIBMResponse = true;
+        indexTypingMessage.shift();
+        this.setState({
+            messages,
+            indexTypingMessage: indexTypingMessage
+        });
     }
 
     render() {
@@ -229,7 +328,7 @@ export default class ChatBox extends Component {
                 >
           <span
               className={`dashicons
-              dashicons-arrow-${position[0] == 'bottom' ? 'down' : 'up'}-alt2 
+              dashicons-arrow-${position[0] == 'bottom' ? 'down' : 'up'}-alt2
               header-button minimize-button`}
               onClick={this.props.toggleMinimize}
           ></span>

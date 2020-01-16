@@ -30,7 +30,7 @@ export default class WatsonMessage extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return nextState.currentIndex !== this.state.currentIndex;
+    return nextState.currentIndex !== this.state.currentIndex || nextProps.waitingIBMResponse !== this.props.waitingIBMResponse || nextProps.content.length !== this.props.content.length;
   }
 
   componentDidUpdate(prevProps) {
@@ -39,7 +39,7 @@ export default class WatsonMessage extends Component {
   }
 
   nextPause() {
-    let { content } = this.props;
+    let { content, waitingIBMResponse } = this.props;
     let { currentIndex } = this.state;
 
     if (currentIndex < content.length) {
@@ -47,17 +47,29 @@ export default class WatsonMessage extends Component {
         (item, index) => index > currentIndex && item.response_type === 'pause'
       );
 
-      setTimeout(() => {
+      let timeout = setTimeout(() => {
         this.setState({
           currentIndex: (i === -1) ? content.length : i,
           typing: (i === -1) ? false : content[i].typing
         });
       }, content[currentIndex].time);
+
+      if (waitingIBMResponse) {
+          clearTimeout(timeout);
+          this.setState({
+              currentIndex: (i === -1) ? content.length : i,
+              typing: (i === -1) ? false : content[i].typing
+          });
+      }
     }
   }
 
   escapeAnchorTag(text) {
-    let clearText = DOMPurify.sanitize(text, {ADD_ATTR: ['target']});
+    let config = {
+      ADD_ATTR: ['target', 'frameborder', 'allow','allowfullscreen'],
+      ADD_TAGS: ['iframe']
+    };
+    let clearText = DOMPurify.sanitize(text, config);
     let textParse = Autolinker.parse( clearText, {
       urls: true,
         email: true
