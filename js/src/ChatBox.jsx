@@ -307,6 +307,30 @@ export default class ChatBox extends Component {
         });
     }
 
+    fullscreenEmbeddedChatboxOnMobile(e) {
+        let watsonBox = jQuery('#watson-box');
+        let embeddedChatbox = watsonBox.parent().attr('id') === 'watsonconv-inline-box';
+        let isMobile = /iPhone|iPod|Android/i.test(navigator.userAgent);
+
+        if (isMobile && embeddedChatbox) {
+            watsonBox.css({'height': '100%', 'width': '100%'});
+            watsonBox.parent().addClass('embedded-watsonconv-on-ios');
+            this.setState({
+                isFullScreen: true,
+                showMinimizeButton: true
+            });
+        }
+    }
+
+    minimizeEmbeddedChatboxOnMobile(e) {
+        jQuery('#watson-box').css({'height': '', 'width': ''});
+        jQuery('#watson-box').parent().removeClass('embedded-watsonconv-on-ios');
+        this.setState({
+            isFullScreen: false,
+            showMinimizeButton: false
+        });
+    }
+
     render() {
         let {callConfig, clearText} = watsonconvSettings;
 
@@ -319,6 +343,7 @@ export default class ChatBox extends Component {
             && this.state.mediaSecure;
 
         let hasNumber = Boolean(callConfig.recipient);
+        let showMinimizeButton = this.state.showMinimizeButton;
 
         return (
             <div id='watson-box' className='drop-shadow animated'>
@@ -332,6 +357,14 @@ export default class ChatBox extends Component {
               header-button minimize-button`}
               onClick={this.props.toggleMinimize}
           ></span>
+          {showMinimizeButton &&
+            <span
+                className={`dashicons
+                dashicons-arrow-down-alt2
+                header-button`}
+                onClick={this.minimizeEmbeddedChatboxOnMobile.bind(this)}
+            ></span>
+          }
                     <span
                         onClick={this.reset.bind(this)}
                         className={`dashicons dashicons-trash header-button`}
@@ -350,7 +383,9 @@ export default class ChatBox extends Component {
                     <div className='overflow-hidden watson-font'>{watsonconvSettings.title}</div>
                     <div className='chatbox-logo'></div>
                 </div>
-                <div id="chatbox-body">
+                <div id="chatbox-body"
+                     onClick={!this.state.isFullScreen ? this.fullscreenEmbeddedChatboxOnMobile.bind(this) : ''}
+                >
                     {hasNumber && showCallInterface &&
                     <CallInterface allowTwilio={allowTwilio}
                                    toggleCallInterface={this.toggleCallInterface.bind(this)}
@@ -372,7 +407,10 @@ export default class ChatBox extends Component {
                             )}
                         </div>
                     </div>
-                    <InputBox sendMessage={this.sendMessage.bind(this)}/>
+                    <InputBox
+                        sendMessage={this.sendMessage.bind(this)}
+                        fullscreenEmbeddedChatbox={this.fullscreenEmbeddedChatboxOnMobile.bind(this)}
+                    />
                 </div>
             </div>
         );

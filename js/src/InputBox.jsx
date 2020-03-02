@@ -31,8 +31,15 @@ export default class InputBox extends Component {
   }
 
   onFocus(e) {
+
       if (jQuery.browser.safari && navigator.userAgent.match(/(iPod|iPhone)/) && jQuery(window).innerWidth() < 640) {
           const innerHeight = window.innerHeight;
+          let watsonBox = jQuery('#watson-box');
+          let embeddedChatbox = watsonBox.parent().attr('id') === 'watsonconv-inline-box';
+          if (embeddedChatbox) {
+              this.props.fullscreenEmbeddedChatbox();
+          }
+
 
           this.setState({
               pageScrolling: false,
@@ -44,7 +51,7 @@ export default class InputBox extends Component {
               const windowInnerHeight = innerHeight - distanceHeaderToTop;
               const newChatBoxHeight = windowInnerHeight * 100 / innerHeight;
 
-              jQuery('#watson-box').css({'height': newChatBoxHeight + '%'});
+              watsonBox.css({'height': newChatBoxHeight + '%'});
               jQuery('body').addClass('show-chatbox');
               jQuery(window).scrollTop(0);
           }, 500);
@@ -64,7 +71,9 @@ export default class InputBox extends Component {
        jQuery('body').removeClass('show-chatbox');
 
        if (this.state.scrollPosition > 0) {
-           jQuery(window).scrollTop(this.state.scrollPosition);
+           setTimeout(() => {
+               jQuery(window).scrollTop(this.state.scrollPosition);
+           }, 100);
        }
   }
 
