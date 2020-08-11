@@ -134,8 +134,20 @@ class Customize {
             esc_html__('Categories', self::SLUG)
         );
 
+        $сlear_chat_title = sprintf(
+            '<span href="#" title="%s">%s</span>',
+            esc_html__(
+                'When using this option, messages in the chat window will be deleted after 
+                going to a new page or after updating the current page.',
+                self::SLUG
+            ),
+            esc_html__('Clear Chat For New Page', self::SLUG)
+        );
+
         add_settings_field('watsonconv_delay', $delay_title,
             array(__CLASS__, 'render_delay'), $settings_page, 'watsonconv_behaviour');
+        add_settings_field('watsonconv_clear_chat', $сlear_chat_title,
+            array(__CLASS__, 'render_clear_chat'), $settings_page, 'watsonconv_behaviour');
 
         add_settings_field('watsonconv_show_on', $show_on_title,
             array(__CLASS__, 'render_show_on'), $settings_page, 'watsonconv_behaviour');
@@ -149,12 +161,30 @@ class Customize {
             array(__CLASS__, 'render_categories'), $settings_page, 'watsonconv_behaviour');
 
         register_setting(self::SLUG, 'watsonconv_delay');
+        register_setting(self::SLUG, 'watsonconv_clear_chat');
 
         register_setting(self::SLUG, 'watsonconv_show_on');
         register_setting(self::SLUG, 'watsonconv_home_page');
         register_setting(self::SLUG, 'watsonconv_pages', array(__CLASS__, 'sanitize_array'));
         register_setting(self::SLUG, 'watsonconv_posts', array(__CLASS__, 'sanitize_array'));
         register_setting(self::SLUG, 'watsonconv_categories', array(__CLASS__, 'sanitize_array'));
+    }
+
+    public static function render_clear_chat() {
+        Main::render_radio_buttons(
+            'watsonconv_clear_chat',
+            'no',
+            array(
+                array(
+                    'label' => esc_html__('Yes', self::SLUG),
+                    'value' => 'yes'
+                ),
+                array(
+                    'label' => esc_html__('No', self::SLUG),
+                    'value' => 'no'
+                )
+            )
+        );
     }
     
     public static function sanitize_array($val) {
@@ -600,7 +630,7 @@ class Customize {
         ?>
         <input name="watsonconv_message_after_error" id="watsonconv_message_after_error"
                type="text" style="width: 16em"
-               value="<?php echo get_option('watsonconv_message_after_error', '') ?>"/>
+               value="<?php echo htmlspecialchars(get_option('watsonconv_message_after_error', '')) ?>"/>
         <?php
     }
 

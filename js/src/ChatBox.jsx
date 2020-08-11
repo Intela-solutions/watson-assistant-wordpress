@@ -52,7 +52,12 @@ export default class ChatBox extends Component {
     }
 
     loadStateFromStorage() {
-        this.state = JSON.parse(localStorage.getItem('watson_bot_state'));
+        let watsonBotState = JSON.parse(localStorage.getItem('watson_bot_state'));
+        if(watsonconvSettings.clearChat === 'yes') {
+            watsonBotState.messages.splice(1);
+        }
+
+        this.state = watsonBotState;
         if (!this.state.context) {
             this.state.context = {};
         }

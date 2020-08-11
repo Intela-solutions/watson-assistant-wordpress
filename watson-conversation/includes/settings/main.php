@@ -66,6 +66,7 @@ class Main {
             wp_localize_script('watsonconv-settings', 'page_data', array('hook_suffix' => $hook_suffix));
 
             \WatsonConv\Frontend::enqueue_styles(false);
+            \WatsonConv\Frontend::enqueue_wp_api_scripts();
         }
     }
 

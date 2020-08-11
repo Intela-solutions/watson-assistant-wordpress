@@ -217,6 +217,6 @@ table.rows, .rows td  {
   color: #ff0000;
 }
 
-.chat_box_page input[type=number] {
+.tab-page input[type=number] {
   padding-right: 1px;
 }

@@ -342,7 +342,8 @@ class Frontend {
             'typingDelayFromPlugin' => $typing,
             'typingDelayTime' => $typing_delay_time,
             'typingMaxWaitingtime' => $typing_max_waiting_time,
-            'messageAfterError' => get_option('watsonconv_message_after_error', '')
+            'messageAfterError' => get_option('watsonconv_message_after_error', ''),
+            'clearChat' => get_option('watsonconv_clear_chat', 'no')
         );
     }
 
@@ -370,7 +371,7 @@ class Frontend {
             (get_option('watsonconv_use_client_limit', 'no') == 'no' ||
                 $client_requests < get_option('watsonconv_client_limit', 100)) &&
             $is_enabled) {
-
+            self::enqueue_wp_api_scripts();
             self::enqueue_styles();
             $settings = self::get_settings();
             
@@ -401,13 +402,12 @@ class Frontend {
             $is_enabled) 
         {
             if (!wp_script_is('watsonconv-chat-app', 'enqueued')) {
+                self::enqueue_wp_api_scripts();
                 self::enqueue_styles();
                 $settings = self::get_settings();
-                
                 if ($settings['callConfig']['useTwilio'] == 'yes' && $settings['callConfig']['configured']) {
                     wp_enqueue_script('twilio-js', 'https://media.twiliocdn.com/sdk/js/client/v1.4/twilio.min.js');
                 }
-    
                 wp_enqueue_script('watsonconv-chat-app');
                 wp_localize_script('watsonconv-chat-app', 'watsonconvSettings', $settings);
             }
@@ -427,6 +427,9 @@ class Frontend {
     public static function register_scripts() {
         wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array('jquery'), self::get_version(), true);
         wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::get_version());
+    }
+
+    public static function enqueue_wp_api_scripts() {
         wp_enqueue_script('wp-api');
         wp_localize_script( 'wp-api', 'wpApiSettings', array( 'root' => esc_url_raw( rest_url() ), 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
     }
