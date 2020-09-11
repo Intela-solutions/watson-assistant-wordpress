@@ -32,7 +32,8 @@ class API {
             register_rest_route('watsonconv/v1', '/message',
                 array(
                     'methods' => 'post',
-                    'callback' => array(__CLASS__, 'route_request')
+                    'callback' => array(__CLASS__, 'route_request'),
+                    'permission_callback' => '__return_true'
                 )
             );
         }
@@ -48,14 +49,16 @@ class API {
             register_rest_route('watsonconv/v1', '/twilio-token',
                 array(
                     'methods' => 'get',
-                    'callback' => array(__CLASS__, 'twilio_get_token')
+                    'callback' => array(__CLASS__, 'twilio_get_token'),
+                    'permission_callback' => '__return_true'
                 )
             );
 
             register_rest_route('watsonconv/v1', '/twilio-call',
                 array(
                     'methods' => 'post',
-                    'callback' => array(__CLASS__, 'twilio_call')
+                    'callback' => array(__CLASS__, 'twilio_call'),
+                    'permission_callback' => '__return_true'
                 )
             );
         }
@@ -63,21 +66,30 @@ class API {
         register_rest_route('watsonconv/v1', '/test-email',
             array(
                 'methods' => 'post',
-                'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_email')
+                'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_email'),
+                'permission_callback' => function() {
+                    return current_user_can( 'edit_others_posts' );
+                }
             )
         );
 
         register_rest_route('watsonconv/v1', '/test-notification',
             array(
                 'methods' => 'post',
-                'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_notification')
+                'callback' => array('\WatsonConv\Settings\Advanced', 'send_test_notification'),
+                'permission_callback' => function() {
+                    return current_user_can( 'edit_others_posts' );
+                }
             )
         );
 
         register_rest_route('watsonconv/v1', '/get-logo',
             array(
                 'methods' => 'post',
-                'callback' => array('\WatsonConv\Settings\Customize', 'get_watson_logo')
+                'callback' => array('\WatsonConv\Settings\Customize', 'get_watson_logo'),
+                'permission_callback' => function() {
+                    return current_user_can( 'edit_others_posts' );
+                }
             )
         );
 
@@ -471,8 +483,8 @@ class API {
     }
 
     public static function reset_client_usage() {
-        if (get_transient('watsonconv_client_list')) {
-            foreach (get_transient('watsonconv_client_list') as $client_id => $val) {
+        if (get_option('watsonconv_client_list')) {
+            foreach (get_option('watsonconv_client_list') as $client_id => $val) {
                 delete_option("watsonconv_requests_$client_id");
             };
 

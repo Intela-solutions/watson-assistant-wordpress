@@ -36,7 +36,10 @@ class Logger {
 		// Registering route for getting logs
 		register_rest_route($plugin_rest_namespace, $logs_rest_route, array(
             	'methods' => "GET",
-                'callback' => array('\WatsonConv\Logger', 'get_logs')
+                'callback' => array('\WatsonConv\Logger', 'get_logs'),
+                'permission_callback' => function() {
+                  return current_user_can( 'edit_others_posts' );
+                }
         ));
 	}
 

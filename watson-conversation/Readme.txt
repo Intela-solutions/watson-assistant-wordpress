@@ -2,8 +2,8 @@
 Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
-Tested up to: 5.3
-Stable tag: 0.8.28
+Tested up to: 5.5
+Stable tag: 0.8.29
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -87,6 +87,10 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog ==
+
+= 0.8.29 =
+* Fixed the 'Limiting API requests per client' function
+* Added permission_callback to the register_rest_route function (WordPress 5.5 requirements)
 
 = 0.8.28 =
 * Added 'Clear Chat history' functionality for new page
