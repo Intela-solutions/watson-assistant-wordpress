@@ -60,6 +60,8 @@ if ( ! class_exists( 'WP_Async_Request' ) ) {
 
 			add_action( 'wp_ajax_' . $this->identifier, array( $this, 'maybe_handle' ) );
 			add_action( 'wp_ajax_nopriv_' . $this->identifier, array( $this, 'maybe_handle' ) );
+            add_action('wp_ajax_psfc_search_product',  array( $this, 'psfc_search_product' ));
+            add_action('wp_ajax_nopriv_psfc_search_product', array( $this, 'psfc_search_product' ));
 		}
 
 		/**
@@ -150,6 +152,68 @@ if ( ! class_exists( 'WP_Async_Request' ) ) {
 
 			wp_die();
 		}
+
+        public function psfc_search_product() {
+
+            $search_query = sanitize_text_field($_POST['message']);
+
+            $credentials = get_option('chatbot_watson_product_search_credentials');
+            $show_product_links                    = (isset($credentials['product_links']) ? $credentials['product_links'] : "true");
+            $show_image_product                    = (isset($credentials['image_product']) ? $credentials['image_product'] : "true");
+            $show_count_of_items                   = (isset($credentials['count_of_items']) ? $credentials['count_of_items'] : "true");
+            $count_of_items_in_search_results      = (isset($credentials['count_of_items_in_search_results']) ? $credentials['count_of_items_in_search_results'] : 0 );
+            $server_return_text_product_not_found  =  (isset($credentials['server_return_text_product_not_found']) && $credentials['server_return_text_product_not_found'] != "" ? $credentials['server_return_text_product_not_found'] : "No products found." );
+            $html_response = "";
+
+            $args = array(
+                'posts_per_page' => $count_of_items_in_search_results,
+                'post_type' => 'product',
+                'post_status' => 'publish',
+                's' => $search_query
+            );
+            $query = new WP_Query( $args );
+
+            if ( $query->have_posts() ) {
+                while ( $query->have_posts() ) {
+                    $query->the_post();
+                    $image = "";
+                    $stock = "";
+                    global $product;
+                    if ( $show_count_of_items == "true" ) {
+                        $stock = __("Stock quantity: ") . $product->get_stock_quantity();
+                        $stock = "<span class=\"product_stock\">". esc_html($stock) ."</span>";
+                    }
+                    if ( $show_image_product == "true" ) {
+                        $image_url = wp_get_attachment_image_src( get_post_thumbnail_id( get_the_ID() ));
+                        $image = ($image_url[0]!='')?"<span class=\"wrap_img\"><img src=\"" . esc_url($image_url[0]) . "\" alt=\"product_img\"></span>":'';
+                    }
+                    $product_link = get_permalink( get_the_ID() );
+                    $product_title = get_the_title( get_the_ID() );
+                    if ( $show_product_links == "true" ) {
+                        $html_response .= "<a href=\"". esc_url($product_link) ."\" target=\"_blank\" class=\"psfc_product_item\">
+                        $image
+                        <span class=\"product_title\">". esc_html($product_title) ."</span>
+                        $stock
+                    </a>";
+                    } else {
+                        $html_response .= "<div class=\"psfc_product_item\">
+                        $image
+                        <span class=\"product_title\">". esc_html($product_title) ."</span>
+                        $stock
+                    </div>";
+                    }
+                }
+            } else {
+                $html_response .= $server_return_text_product_not_found;
+            }
+
+            wp_reset_postdata();
+
+            echo $html_response;
+
+            wp_die();
+
+        }
 
 		/**
 		 * Handle

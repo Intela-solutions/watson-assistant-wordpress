@@ -2,6 +2,7 @@
 namespace WatsonConv;
 
 add_action('wp_loaded', array('WatsonConv\Frontend', 'register_scripts'));
+add_action('wp_loaded', array('WatsonConv\Frontend', 'enqueue_frontend_scripts'));
 add_action('wp_enqueue_scripts', array('WatsonConv\Frontend', 'chatbox_popup'));
 add_action('wp_footer', array('WatsonConv\Frontend', 'render_div'));
 add_shortcode('watson-chat-box', array('WatsonConv\Frontend', 'chatbox_shortcode'));
@@ -426,7 +427,35 @@ class Frontend {
 
     public static function register_scripts() {
         wp_register_script('watsonconv-chat-app', WATSON_CONV_URL.'app.js', array('jquery'), self::get_version(), true);
+        wp_register_script('watsonconv-chat-app-main', WATSON_CONV_URL.'js/main.js', array('jquery'), self::get_version(), true);
         wp_register_style('watsonconv-chatbox', WATSON_CONV_URL.'css/chatbox.css', array('dashicons'), self::get_version());
+    }
+
+    public static function enqueue_frontend_scripts() {
+        wp_enqueue_script(
+            'watsonconv-front-scripts',
+            WATSON_CONV_URL.'js/main.js',
+            array('jquery', 'watsonconv-chat-app'),
+            false,
+            true
+        );
+
+        $credentials = get_option('watsonconv_credentials');
+
+        $credentials_product = get_option('chatbot_watson_product_search_credentials');
+        $product_status = (isset($credentials_product['enabled']) ? $credentials_product['enabled'] : 'true');
+        $search_command = '/search_product';
+
+        wp_localize_script( 'watsonconv-front-scripts', 'watsonconv_global',
+            array(
+                'watsonconv_show_control_button' => isset($credentials['render_show_control_button']) ? true : false,
+                'watsonconv_control_list' => apply_filters( 'watsonconv_control_filters', array() ),
+                'psfc_status' => $product_status,
+                'psfc_search_command' => $search_command,
+                'ajax_url' => admin_url('admin-ajax.php'),
+            )
+        );
+
     }
 
     public static function enqueue_wp_api_scripts() {

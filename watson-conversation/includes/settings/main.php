@@ -2,6 +2,7 @@
 namespace WatsonConv\Settings;
 
 require_once(WATSON_CONV_PATH.'includes/settings/setup.php');
+require_once(WATSON_CONV_PATH.'includes/settings/product.php');
 require_once(WATSON_CONV_PATH.'includes/settings/customize.php');
 require_once(WATSON_CONV_PATH.'includes/settings/advanced.php');
 
@@ -10,6 +11,7 @@ add_action('admin_init', array('WatsonConv\Settings\Main', 'init_settings'));
 add_action('admin_enqueue_scripts', array('WatsonConv\Settings\Main', 'init_scripts'));
 add_action('after_plugin_row_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings\Main', 'render_notice'), 10, 3);
 add_filter('plugin_action_links_'.WATSON_CONV_BASENAME, array('WatsonConv\Settings\Main', 'add_links'));
+add_filter('watsonconv_control_filters', array('WatsonConv\Settings\Main', 'add_control_button'), 1);
 
 add_action('plugins_loaded', array('WatsonConv\Settings\Setup', 'migrate_old_credentials'));
 add_action('plugins_loaded', array('WatsonConv\Settings\Setup', 'change_credentials_to_basic'));
@@ -25,6 +27,7 @@ class Main {
             array(__CLASS__, 'render_page'), 'dashicons-format-chat');
 
         Setup::init_page();
+        Product::init_page();
         Customize::init_page();
         Advanced::init_page();
 
@@ -43,6 +46,7 @@ class Main {
 
     public static function init_settings() {
         Setup::init_settings();
+        Product::init_settings();
         Customize::init_settings();
         Advanced::init_settings();
     }
@@ -215,4 +219,16 @@ class Main {
         <?php
         }
     }
+
+    public static function add_control_button($watsonconv_control_list){
+        $credentials = get_option('chatbot_watson_product_search_credentials');
+        $enabled = (isset($credentials['show_search_button']) && $credentials['show_search_button'] == "true" ? true : false);
+        $input_text = isset($credentials['server_return_text']) && $credentials['server_return_text'] != "" ? $credentials['server_return_text'] : 'You clicked the inline button, enter the name of the product.';
+        if ( $enabled ) {
+            $watsonconv_control_list['product_addon_for_chat'] = array();
+            $watsonconv_control_list['product_addon_for_chat'][] = array("search product", "/search_product", __($input_text));
+        }
+        return $watsonconv_control_list;
+    }
+
 }

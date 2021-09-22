@@ -61,6 +61,9 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 			$this->cron_interval_identifier = $this->identifier . '_cron_interval';
 
 			add_action( $this->cron_hook_identifier, array( $this, 'handle_cron_healthcheck' ) );
+
+            add_action( 'admin_init', array( $this, 'check_status_plugins') );
+
 			add_filter( 'cron_schedules', array( $this, 'schedule_cron_healthcheck' ) );
 		}
 
@@ -70,6 +73,19 @@ if ( ! class_exists( 'WP_Background_Process' ) ) {
 		 * @access public
 		 * @return void
 		 */
+
+        public function check_status_plugins() {
+
+            if ( !is_plugin_active('woocommerce/woocommerce.php') ) {
+                add_action( 'admin_notices', array($this, 'render_notification') );
+            }
+
+        }
+
+        public function render_notification() { ?>
+            <div class="notice notice-error"><p>The <strong>Woocommerce</strong> missing or not included. <strong>ChatBot Watson</strong> is not working.</p></div>
+        <?php }
+
 		public function dispatch() {
 			// Schedule the cron healthcheck.
 			$this->schedule_event();

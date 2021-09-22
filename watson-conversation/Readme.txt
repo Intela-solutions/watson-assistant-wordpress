@@ -3,7 +3,7 @@ Contributors: cognitiveclass
 Tags:  chat, chatbot, chat bot, artificial intelligence, support, faq
 Requires at least: 4.7
 Tested up to: 5.7
-Stable tag: 0.8.30
+Stable tag: 0.8.32
 License: Apache v2.0
 License URI: http://www.apache.org/licenses/LICENSE-2.0
 
@@ -58,7 +58,7 @@ Once you've created your workspace using the course or the link above, you must 
 
 1.  From the Deploy tab of your workspace, you must obtain your username and password credentials in addition to the Workspace URL of your new workspace.
 
-1. Enter these on the "Main Setup" tab of your settings page. Once you click "Save Changes", the plugin will verify if the credentials are valid and notify you of whether or not the configuration was successful. 
+1. Enter these on the "Main Setup" tab of your settings page. Once you click "Save Changes", the plugin will verify if the credentials are valid and notify you of whether or not the configuration was successful.
 
 1. (Optional) By default, the chatbot shows up on all pages of your website. In the Behaviour tab of your settings page, you can choose which pages to show the chat bot on. You can also show the chat box inline within posts and pages using the shortcode `[watson-chat-box]`
 
@@ -87,6 +87,12 @@ On the same page where you build your chatbot in IBM Cloud, you can click on the
 1. An example of your chatbot greeting a website visitor.
 
 == Changelog ==
+
+= 0.8.32 =
+* Product Search update v1.1
+
+= 0.8.31 =
+* Add Product Search
 
 = 0.8.30 =
 * Tested up to WordPress v5.7

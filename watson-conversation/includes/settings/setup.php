@@ -400,6 +400,9 @@ class Setup {
         add_settings_field('watsonconv_api_key', 'API Key', array(__CLASS__, 'render_api_key'),
             $settings_page, 'watsonconv_credentials');
 
+        add_settings_field('watsonconv_show_control_button', 'Show control button', array(__CLASS__, 'render_show_control_button'),
+            $settings_page, 'watsonconv_credentials');
+
         register_setting(self::SLUG, 'watsonconv_credentials', array(__CLASS__, 'validate_credentials'));
     }
 
@@ -738,6 +741,24 @@ class Setup {
                value="<?php echo empty($credentials['api_key']) ? '' : $credentials['api_key']; ?>"
                placeholder="e.g. XxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx"
                style="max-width: 30em; width: 100%;"/>
+        <?php
+    }
+
+    public static function render_show_control_button() {
+        $credentials = get_option('watsonconv_credentials');
+        $enabled = isset($credentials['render_show_control_button']) ? true : false;
+        ?>
+        <fieldset>
+            <input
+                    type="checkbox" id="watsonconv_show_control_button"
+                    name="watsonconv_credentials[render_show_control_button]"
+                    value="true"
+                <?php echo $enabled ? 'checked' : '' ?>
+            />
+            <label for="watsonconv_show_control_button">
+                Show
+            </label>
+        </fieldset>
         <?php
     }
 

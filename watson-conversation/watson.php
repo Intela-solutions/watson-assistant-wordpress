@@ -1,10 +1,11 @@
 <?php
 /*
-Plugin Name: Watson Assistant
+Plugin Name: Chatbot Watson
+Plugin URI:  https://intela-bot.com/
 Description: This plugin allows you to easily add chatbots powered by IBM Watson Assistant (formerly Watson Conversation) to your website.
 Author: IBM Cognitive Class
 Author URI: https://cognitiveclass.ai
-Version: 0.8.30
+Version: 0.8.32
 Text Domain: watsonconv
 */
 
@@ -23,12 +24,16 @@ function watsonconv_check_php_compatibility() {
                 or greater. You have PHP version <b>". PHP_VERSION . '</b>. See 
                 <a href="https://wordpress.org/support/upgrade-php/" target="_blank">this page</a>
                 for information on upgrading.</p>',
-            'Plugin Activation Error',  
+            'Plugin Activation Error',
             array('response' => 200, 'back_link' => TRUE)
         );
     } else {
         return;
     }
+}
+
+function watsonconv_deactivation_plugin() {
+    unset($GLOBALS['watson_assistant_global']);
 }
 
 register_activation_hook(WATSON_CONV_FILE, 'watsonconv_check_php_compatibility');

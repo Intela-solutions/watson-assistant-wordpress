@@ -570,3 +570,95 @@
   bottom: 0px;
   left: 0px;
 }
+
+/****             BTN CONTROL CHAT               *****/
+
+.message-form.watson-font {
+  position: relative;
+}
+#watson-box .message-form .message-input:focus {
+  outline: none;
+}
+
+#watson-box .wrap-btn-control.hidden {
+  display: none;
+}
+
+#watson-box .wrap-btn-control {
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+#watson-box .wrap-btn-control.show {
+  background-color: rgb(35, 40, 45);
+}
+#watson-box .wrap-btn-control.show .btn-show-control-list {
+  background-image: url(../img/logo_control_btn_w.png);
+}
+#watson-box .wrap-btn-control .btn-show-control-list {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  background-size: contain;
+  background-position: center;
+  background-image: url(../img/logo_control_btn_b.png);
+  background-repeat: no-repeat;
+}
+#watson-box .control-list {
+  position: absolute;
+  width: 100%;
+  background-color: rgb(35, 40, 45);
+  bottom: 100%;
+  padding: 10px 30px 10px 10px;
+  display: none;
+}
+#watson-box .control-list .btn-control {
+  display: inline-block;
+  margin-right: 10px;
+  background-color: #fff;
+  color: #000;
+  border-radius: 1.4em;
+  padding: 0.5em 0.8em;
+  font-size: 11pt;
+  -webkit-touch-callout: none; 
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#watson-box .control-list .btn-control:last-child {
+  margin-right: 0;
+}
+
+.psfc_product_item {
+  display: inline-block;
+  margin: 5px 0 5px;
+  width: 100%;
+  border-radius: 1.4em;
+  background-color: #fff;
+  padding: 10px;
+}
+.psfc_product_item .product_title,
+.psfc_product_item .product_stock {
+  color: #000;
+}
+.psfc_product_item .wrap_img {
+  display: flex;
+  margin: 0;
+  justify-content: center;
+}
+.psfc_product_item .wrap_img img{
+  width:100%;
+  margin-bottom:10px;
+}
+.psfc_product_item img {
+  border-radius: 1.4em;
+}
+.psfc_product_item .product_title, .psfc_product_item .product_stock {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}

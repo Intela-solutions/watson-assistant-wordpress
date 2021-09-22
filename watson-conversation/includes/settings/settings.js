@@ -41,11 +41,24 @@ function switch_tab(tab_name) {
   sessionStorage.setItem('watsonconv_active_tab_' + page_data.hook_suffix, tab_name);
 }
 
+function switch_tab_product_search_for_chat(tab_name) {
+    jQuery('.tab-page').hide();
+    jQuery(`.tab-page.${tab_name}_page`).show();
+    jQuery('.tab_wrapper_product_search_for_chat .nav-tab-active').removeClass('nav-tab-active');
+    jQuery(`.tab_wrapper_product_search_for_chat .${tab_name}_tab`).addClass('nav-tab-active');
+
+    sessionStorage.setItem('watsonconv_active_tab_' + page_data.hook_suffix, tab_name);
+}
+
 jQuery(document).ready(function($) {
 
-  if (sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix)) {
+    if (sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix)) {
     switch_tab(sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix));
-  }
+    }
+
+    if (sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix)) {
+    switch_tab_product_search_for_chat(sessionStorage.getItem('watsonconv_active_tab_' + page_data.hook_suffix));
+    }
 
   $(document).tooltip({
     show: 200,
