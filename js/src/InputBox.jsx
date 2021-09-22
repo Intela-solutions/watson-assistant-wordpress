@@ -96,6 +96,8 @@ export default class InputBox extends Component {
 
     return (
       <form action='' className='message-form watson-font' onSubmit={this.submitMessage.bind(this)}>
+          <div className="wrap-btn-control "><a className="btn-show-control-list"></a></div>
+          <div className="control-list"></div>
         <input
           className='message-input watson-font'
           type='text'

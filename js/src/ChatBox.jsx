@@ -133,6 +133,10 @@ export default class ChatBox extends Component {
     }
 
     sendMessage(message, fullBody = false) {
+
+        jQuery('#watson-box #messages .tmp-message').remove();
+
+
         if (!this.state.convStarted) {
             this.setState({convStarted: true});
         }
@@ -160,9 +164,20 @@ export default class ChatBox extends Component {
                 }
             });
         }
+
         sendBody.session_id = this.state.session_id;
         let waitingIBMResponse = watsonconvSettings.typingDelayFromPlugin === 'waiting_ibm_response';
         let typingDelayFromPlugin = watsonconvSettings.typingDelayFromPlugin === 'yes';
+
+        var input_message = document.querySelector("#watson-box .message-form .message-input");
+        var data_control = input_message.getAttribute("data-control");
+        var obj_data_addon = sendBody.input.text ? {
+            //status_plugin: !!watsonconv_global.pafc_addon_status,
+            message: sendBody.input.text,
+            status_control: data_control
+            //search_command: watsonconv_global.pafc_search_command,
+            //find_command_to_message: r.input.text.indexOf(watsonconv_global.pafc_search_command) != -1 ? true : false
+        } : false;
 
         fetch(watsonconvSettings.apiUrl, {
             headers: {
@@ -206,15 +221,51 @@ export default class ChatBox extends Component {
                 state.messages = messages;
                 state.indexTypingMessage = indexTypingMessage;
             } else {
-                state.messages = this.state.messages.concat({
+                if ( obj_data_addon && obj_data_addon.status_control == '/search_product' ) {
+                    input_message.setAttribute("data-control", "");
+                    var data = {
+                        'action': 'psfc_search_product',
+                        'message': obj_data_addon.message,
+                        //'search_command': obj_data_addon.search_command
+                    };
+                    jQuery.ajax({
+                        url : watsonconv_global.ajax_url,
+                        data : data,
+                        method : 'POST',
+                        success : response =>{
+                            console.log(response);
+                            var html_response_data = {
+                                response_type: "text",
+                                text: response
+                            };
+                            var local_storage = JSON.parse(localStorage.getItem("product_search_for_chat"));
+                            //t.state.messages = local_storage.messages;
+                            //
+                            var last_el_arr = this.state.messages[this.state.messages.length - 1];
+                            this.state.messages.splice(this.state.messages.length - 1,1);
+                            this.state.messages.push(local_storage[0]);
+                            this.state.messages.push(last_el_arr);
+                            state.messages = this.state.messages.concat({
+                                from: "watson",
+                                content: [html_response_data],
+                                options: body.output.options
+                            }), state.session_id = body.session_id;
+                            this.setState(state, this.saveState.bind(this))
+                        },
+                        error : function(error){
+                            console.log(error);
+                        }
+                    });
+                } else {
+                    state.messages = this.state.messages.concat({
                         from: 'watson',
                         content: generic,
                         options: body.output.options
                     });
-                state.session_id = body.session_id;
+                    state.session_id = body.session_id;
+                    this.setState(state, this.saveState.bind(this));
+                }
             }
-
-            this.setState(state, this.saveState.bind(this));
 
         }).catch(error => {
             console.log(error);
